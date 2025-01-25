@@ -7,30 +7,32 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        var customers = new List<Customer>
-        {
-            new Customer("Me"),
-            new Customer("CR7"),
-            new Customer("Matvej"),
-            new Customer("Starij Bog"),
-            new Customer("ALoha")
-        };
+        var carService = new CarService();
+        var customerStorage = new CustomerStorage();
+        var hseCarService = new HseCarService(carService, customerStorage);
+        var pedalCarFactory = new PedalCarFactory();
+        var handCarFactory = new HandCarFactory();
 
-        var factory = new FactoryAF(customers);
+        customerStorage.AddCustomer(new Customer("Ann", 6, 4));
+        customerStorage.AddCustomer(new Customer("Bob", 4, 6));
+        customerStorage.AddCustomer(new Customer("Clark", 6, 6));
+        customerStorage.AddCustomer(new Customer("Denis", 4, 4));
 
-        for (int i = 0; i < 5; i++)
+        carService.AddCar(pedalCarFactory, new PedalEngineParams(4));
+        carService.AddCar(pedalCarFactory, new PedalEngineParams(4));
+        carService.AddCar(handCarFactory, new EmptyEngineParams());
+        carService.AddCar(handCarFactory, new EmptyEngineParams());
+
+        foreach (var customer in customerStorage.GetCustomerList())
         {
-            factory.AddCar();
+            Console.WriteLine(customer);
         }
 
-        Console.WriteLine("Was");
-        Console.WriteLine(string.Join(Environment.NewLine, factory.Cars));
-        Console.WriteLine(string.Join(Environment.NewLine, factory.Customers));
+        hseCarService.SellCars();
 
-        factory.SaleCar();
-
-        Console.WriteLine("Now");
-        Console.WriteLine(string.Join(Environment.NewLine, factory.Cars));
-        Console.WriteLine(string.Join(Environment.NewLine, factory.Customers));
+        foreach (var customer in customerStorage.GetCustomerList())
+        {
+            Console.WriteLine(customer);
+        }
     }
 }
